@@ -1,41 +1,114 @@
-# Security Log Analyzer
+Security Log Analyzer
 
-A Python-based command-line tool for analyzing authentication logs and identifying suspicious login patterns for further review.
+A Python command-line tool that analyzes authentication logs, summarizes login activity, identifies repeated failed login attempts by IP address, and exports a JSON report.
 
-## Project Goals
+Features
 
-- Parse authentication log entries.
-- Summarize successful and failed login attempts.
-- Identify sources with repeated failed logins.
-- Flag potentially suspicious patterns using configurable thresholds.
-- Generate a structured report of the analysis.
+Counts successful and failed login attempts.
 
-## Planned Features
+Calculates the total number of valid login attempts.
 
-- Support for sample authentication logs.
-- Input validation and handling of malformed entries.
-- Summary statistics for login activity.
-- JSON report export.
-- Automated tests for key scenarios.
+Groups failed login attempts by IP address.
 
-## Project Status
+Warns when an IP address has three or more failed login attempts.
 
-**Initial planning**
+Detects and counts malformed log entries.
 
-The repository is being prepared. The features listed above are planned and have not yet been implemented or verified.
+Exports analysis results to a JSON report.
 
-## Scope and Limitations
+Handles missing log files and file access errors.
 
-This project is intended for educational and defensive security analysis using sample or authorized log data.
+Requirements
 
-A flagged pattern is an indicator for further investigation, not proof of malicious activity.
+Python 3.10 or later
 
-## Technology
+No external Python packages are required.
 
-- Python
-- JSON
-- Automated testing
+Project Structure
 
-## License
+security-log-analyzer/
+├── main.py
+├── sample.log
+├── README.md
+├── .gitignore
+└── report.json  # Generated when the program runs
 
-No license has been selected yet.
+Log Format
+
+The input file uses pipe-separated fields in the following format:
+
+timestamp | IP address | status
+
+Supported status values are SUCCESS and FAILED.
+
+Example:
+
+2026-10-28 09:15:00 | 192.168.1.10 | SUCCESS
+2026-10-28 09:16:00 | 192.168.1.20 | FAILED
+2026-10-28 09:17:00 | 192.168.1.20 | FAILED
+2026-10-28 09:18:00 | 192.168.1.20 | FAILED
+
+How to Run
+
+Run the following command from the project directory:
+
+python main.py
+
+The program reads sample.log, displays an analysis summary, and writes the results to report.json.
+
+Example Output
+
+Security Log Analyzer
+Project initialized successfully.
+
+Analysis Report
+------------------------------
+Successful logins: 1
+Failed logins: 3
+Total login attempts: 4
+Malformed lines skipped: 0
+
+Failed Attempts by IP
+------------------------------
+192.168.1.20: 3
+  WARNING: Repeated failed logins detected.
+
+Report saved to report.json
+
+JSON Report
+
+The generated JSON report contains the following fields:
+
+successful_logins: Number of successful login attempts.
+
+failed_logins: Number of failed login attempts.
+
+total_attempts: Total number of valid login attempts.
+
+failed_attempts_by_ip: Failed login counts grouped by IP address.
+
+malformed_lines: Number of invalid log entries skipped during analysis.
+
+Current Limitations
+
+The input and output file paths are configured in the source code.
+
+The tool analyzes log files locally and does not monitor live network traffic.
+
+Repeated failed logins are flagged using a fixed threshold of three attempts per IP address.
+
+Future Improvements
+
+Support command-line arguments for input and output paths.
+
+Add unit tests and automated test coverage.
+
+Improve log validation and reporting.
+
+Support configurable detection thresholds.
+
+Add timestamps and severity levels to security alerts.
+
+Disclaimer
+
+This tool is intended for educational purposes and defensive security log analysis. It does not perform network monitoring, intrusion prevention, or automatic IP blocking.
